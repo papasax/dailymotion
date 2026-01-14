@@ -3,9 +3,12 @@ Email service module.
 Handles sending activation codes via SMTP to the configured mail server.
 """
 
+import logging
 import smtplib
 from email.mime.text import MIMEText
 from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 def send_activation_email(email_to: str, code: str) -> None:
@@ -23,6 +26,6 @@ def send_activation_email(email_to: str, code: str) -> None:
     try:
         with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
             server.send_message(msg)
+        logger.info("Activation email sent to %s", email_to)
     except (smtplib.SMTPException, ConnectionError) as e:
-        # In a real app, you might use a proper logger here
-        print(f"Error sending email to {email_to}: {e}")
+        logger.error("Error sending email to %s: %s", email_to, e)

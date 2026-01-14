@@ -25,7 +25,7 @@ class UserRepo:
                     INSERT INTO users (email, password_hash, activation_code, code_expires_at)
                     VALUES (%s, %s, %s, %s)
                     """,
-                    (email, password_hash, code, expires_at)
+                    (email, password_hash, code, expires_at),
                 )
 
     @staticmethod
