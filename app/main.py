@@ -7,7 +7,7 @@ import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from app.api.endpoints import router
-from app.db import init_db
+from app.db import init_db, init_pool, close_pool
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -21,9 +21,18 @@ async def lifespan(_app: FastAPI):
     Ensures the database is initialized before the app starts.
     """
     # Perform database initialization (ensure tables exist)
-    init_db()
+    # 1. Initialize the Async Connection Pool
+    await init_pool()
+
+    # 2. Perform database initialization (ensure tables exist)
+    await init_db()
     logger.info("Application startup: Database tables ensured.")
+
     yield
+
+    # 3. Clean up the pool on shutdown
+    await close_pool()
+
     logger.info("Application shutdown: Cleaning up resources.")
 
 

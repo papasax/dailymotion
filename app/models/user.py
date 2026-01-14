@@ -17,15 +17,13 @@ class UserRepo:
     """
 
     @staticmethod
-    def create(
-        email: EmailStr, password_hash: str, code: str, expires_at: float
+    async def create(
+        email: str, password_hash: str, code: str, expires_at: float
     ) -> None:
-        """
-        Inserts a new user record into the database.
-        """
-        with get_db_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute(
+        """Inserts a new user record asynchronously."""
+        async for conn in get_db_connection():
+            async with conn.cursor() as cur:
+                await cur.execute(
                     """
                     INSERT INTO users (email, password_hash, activation_code, code_expires_at)
                     VALUES (%s, %s, %s, %s)
@@ -34,22 +32,20 @@ class UserRepo:
                 )
 
     @staticmethod
-    def get_by_email(email: EmailStr) -> Optional[Dict[str, Any]]:
-        """
-        Retrieves a user record from the database by their email address.
-        """
-        with get_db_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute("SELECT * FROM users WHERE email = %s", (email,))
-                return cur.fetchone()
+    async def get_by_email(email: str) -> Optional[Dict[str, Any]]:
+        """Retrieves a user record asynchronously by email."""
+        async for conn in get_db_connection():
+            async with conn.cursor() as cur:
+                await cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+                return await cur.fetchone()
 
     @staticmethod
-    def set_active(email: EmailStr) -> None:
+    async def set_active(email: EmailStr) -> None:
         """
         Updates a user's status to active in the database.
         """
-        with get_db_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute(
+        async for conn in get_db_connection():
+            async with conn.cursor() as cur:
+                await cur.execute(
                     "UPDATE users SET is_active = TRUE WHERE email = %s", (email,)
                 )

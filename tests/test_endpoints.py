@@ -4,7 +4,7 @@ Uses mocking to isolate logic from external services like the database or SMTP s
 """
 
 import time
-from unittest.mock import patch
+from unittest.mock import patch, AsyncMock
 import pytest
 from fastapi.testclient import TestClient
 from app.core.security import get_password_hash
@@ -17,11 +17,10 @@ client = TestClient(app)
 def mock_user_repo():
     """
     Fixture to provide a mocked UserRepo for API testing.
+    Uses AsyncMock to handle asynchronous repository methods.
     """
-    # We mock UserRepo in deps.py because that's where it's called by the auth dependency.
-    # We also mock it in endpoints.py for direct calls like register/set_active.
-    with patch("app.api.deps.UserRepo") as mock_deps, patch(
-        "app.api.endpoints.UserRepo"
+    with patch("app.api.deps.UserRepo", new_callable=AsyncMock) as mock_deps, patch(
+        "app.api.endpoints.UserRepo", new_callable=AsyncMock
     ) as mock_endpoints:
 
         # Synchronize both mocks to share the same behavior

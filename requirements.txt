@@ -3,4 +3,5 @@ passlib[bcrypt]
 bcrypt
 pydantic[email]
 psycopg[binary]
+psycopg_pool
 aiosmtplib

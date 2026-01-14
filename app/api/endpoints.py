@@ -31,13 +31,14 @@ async def register(user_in: UserCreate) -> Dict[str, str]:
     Registers a new user, hashes their password, and sends an activation email.
     """
     logger.info("Registration attempt for email: %s", user_in.email)
-    if UserRepo.get_by_email(user_in.email):
+    # Vérification asynchrone
+    if await UserRepo.get_by_email(user_in.email):
         raise HTTPException(status_code=400, detail="Email already registered")
 
     code: str = str(secrets.randbelow(10000)).zfill(4)
     expires_at: float = time.time() + 60
 
-    UserRepo.create(
+    await UserRepo.create(
         user_in.email, get_password_hash(user_in.password), code, expires_at
     )
 
@@ -73,7 +74,7 @@ async def activate(
         logger.warning("Activation failed: Invalid code provided for %s", email)
         raise HTTPException(status_code=400, detail="Invalid code")
 
-    UserRepo.set_active(str(current_user["email"]))
+    await UserRepo.set_active(str(current_user["email"]))
     logger.info("User account activated successfully: %s", email)
     return {"message": "Account activated successfully"}
 
@@ -91,9 +92,9 @@ async def health_check() -> Dict[str, Any]:
 
     # 1. Check Database
     try:
-        with next(get_db_connection()) as conn:
-            with conn.cursor() as cur:
-                cur.execute("SELECT 1")
+        async for conn in get_db_connection():
+            async with conn.cursor() as cur:
+                await cur.execute("SELECT 1")
                 health_status["dependencies"]["database"] = "healthy"
     except (psycopg.Error, RuntimeError) as e:
         logger.error("Health check failed: Database unreachable. %s", e)
