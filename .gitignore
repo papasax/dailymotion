@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+build/
+dist/
+*.egg-info/
+
+# Tests & Coverage
+.pytest_cache/
+.tox/
+.coverage
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Docker & DB
+.docker/
+# Si vous utilisez des volumes locaux pour Postgres (ex: pgdata/)
+pgdata/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables (NE JAMAIS COMMITER)
+.env

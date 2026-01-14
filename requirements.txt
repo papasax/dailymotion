@@ -1,0 +1,7 @@
+fastapi[standard]
+passlib[bcrypt]
+bcrypt==4.3.0
+pydantic[email]
+psycopg[binary]
+pytest
+httpx

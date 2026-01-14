@@ -1,0 +1,36 @@
+
+services:
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432" # Permet de se connecter depuis l'extérieur du conteneur (localhost)
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: registration_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d registration_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  api:
+    build: .
+    networks:
+      - app-network
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=registration_db
+    depends_on:
+      db:
+        condition: service_healthy
+
+networks:
+  app-network:
+    driver: bridge
