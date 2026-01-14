@@ -106,3 +106,20 @@ async def test_activation_fails_after_expiry():
 
     assert act_response.status_code == 400
     assert act_response.json()["detail"] == "Code expired"
+
+
+@pytest.mark.asyncio
+async def test_health_check_success():
+    """
+    Tests that the health check returns 200 OK when both DB and SMTP are reachable.
+    """
+    response = client.get("/api/v1/health")
+
+    # 1. Check status code
+    assert response.status_code == 200
+
+    # 2. Check response body
+    data = response.json()
+    assert data["status"] == "healthy"
+    assert data["dependencies"]["database"] == "healthy"
+    assert data["dependencies"]["smtp"] == "healthy"
