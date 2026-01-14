@@ -17,7 +17,9 @@ class UserRepo:
     """
 
     @staticmethod
-    def create(email: EmailStr, password_hash: str, code: str, expires_at: float) -> None:
+    def create(
+        email: EmailStr, password_hash: str, code: str, expires_at: float
+    ) -> None:
         """
         Inserts a new user record into the database.
         """
