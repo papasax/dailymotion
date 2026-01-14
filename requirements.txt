@@ -1,5 +1,5 @@
-fastapi[standard]
-passlib[bcrypt]
+fastapi[standard]==0.115.6
+passlib[bcrypt]==1.7.4
 bcrypt==4.3.0
-pydantic[email]
-psycopg[binary]
+pydantic[email]==2.10.5
+psycopg[binary]==3.2.4
