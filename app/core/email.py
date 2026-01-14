@@ -4,16 +4,16 @@ Handles sending activation codes via SMTP to the configured mail server.
 """
 
 import logging
-import smtplib
 from email.mime.text import MIMEText
+import aiosmtplib
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
 
-def send_activation_email(email_to: str, code: str) -> None:
+async def send_activation_email(email_to: str, code: str) -> None:
     """
-    Sends a 4-digit activation code to the user's email address using SMTP.
+    Sends a 4-digit activation code using aiosmtplib (asynchronous).
     """
     subject: str = "Your Activation Code"
     body: str = f"Your 4-digit activation code is: {code}. It expires in 1 minute."
@@ -24,8 +24,12 @@ def send_activation_email(email_to: str, code: str) -> None:
     msg["To"] = email_to
 
     try:
-        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
-            server.send_message(msg)
-        logger.info("Activation email sent to %s", email_to)
-    except (smtplib.SMTPException, ConnectionError) as e:
-        logger.error("Error sending email to %s: %s", email_to, e)
+        # Utilisation de aiosmtplib.send pour un envoi rapide
+        await aiosmtplib.send(
+            msg,
+            hostname=settings.SMTP_HOST,
+            port=settings.SMTP_PORT,
+        )
+        logger.info("Activation email sent asynchronously to %s", email_to)
+    except (aiosmtplib.SMTPException, ConnectionError) as e:
+        logger.error("Error sending async email to %s: %s", email_to, e)

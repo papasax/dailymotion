@@ -41,9 +41,10 @@ async def register(user_in: UserCreate) -> Dict[str, str]:
         user_in.email, get_password_hash(user_in.password), code, expires_at
     )
 
-    # Send actual email
-    send_activation_email(user_in.email, code)
-    logger.info("User %s registered successfully. Activation code sent.", user_in.email)
+    # Send actual email asynchronously
+    await send_activation_email(user_in.email, code)
+
+    logger.info("New user registered: %s", user_in.email)
     return {"message": "User registered. Please check your email for the code."}
 
 
