@@ -68,7 +68,7 @@ docker-compose exec api pytest tests/ -v
 
 ---
 
-⚙️ Technical Choices
+## ⚙️ Technical Choices
 *   **Multi-Stage Dockerfile**: The production image is built in two stages to exclude build tools (`gcc`, `libpq-dev`) and development dependencies, resulting in a smaller and more secure attack surface.
 *   **Environment Separation**: 
     *   `requirements.txt`: Core production dependencies.
@@ -81,7 +81,7 @@ docker-compose exec api pytest tests/ -v
 
 ---
 
-🧹 Cleanup
+## 🧹 Cleanup
 
 To stop services and remove volumes (DB data):
 ```bash 
