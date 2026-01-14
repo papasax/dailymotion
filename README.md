@@ -126,8 +126,10 @@ dailymotion/
 │   └── test_integration.py     # Integration tests (with real database)
 │
 ├── docker-compose.yml          # Orchestration (API + PostgreSQL + Mailpit)
+├── docker-compose.override.yml # Local development settings (Hot-reload, dev tools install)
 ├── Dockerfile                  # Python application Docker image
 ├── requirements.txt            # Project dependencies
+├── requirements-dev.txt        # Development & testing tools (-r requirements.txt included)
 ├── .gitignore                  # Excluded files (venv, cache, etc.)
 └── README.md                   # Project documentation
 ````
