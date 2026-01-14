@@ -54,7 +54,7 @@ def test_full_registration_and_activation_flow():
     assert act_response.status_code == 200
     assert act_response.json()["message"] == "Account activated successfully"
 
-    # 4. Vérification finale en base : l'utilisateur doit être actif
+    # 4. Final database check: the user must be active
     updated_user = UserRepo.get_by_email(email)
     assert updated_user["is_active"] is True
 
@@ -77,7 +77,7 @@ def test_activation_fails_with_wrong_code():
     assert act_response.status_code == 400
     assert act_response.json()["detail"] == "Invalid code"
 
-    # Vérification : l'utilisateur est toujours inactif
+    # check: the user is still inactive
     user = UserRepo.get_by_email(email)
     assert user["is_active"] is False
 
@@ -96,7 +96,7 @@ def test_activation_fails_after_expiry():
 
     UserRepo.create(email, get_password_hash(password), "9999", expired_time)
 
-    # Tentative d'activation
+    # activation attempt
     act_response = client.post(
         "/api/v1/activate", json={"code": "9999"}, auth=(email, password)
     )

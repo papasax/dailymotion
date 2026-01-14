@@ -4,6 +4,9 @@ Handles all raw SQL interactions with the PostgreSQL database for the users tabl
 """
 
 from typing import Optional, Any, Dict
+
+from pydantic import EmailStr
+
 from app.db import get_db_connection
 
 
@@ -14,7 +17,7 @@ class UserRepo:
     """
 
     @staticmethod
-    def create(email: str, password_hash: str, code: str, expires_at: float) -> None:
+    def create(email: EmailStr, password_hash: str, code: str, expires_at: float) -> None:
         """
         Inserts a new user record into the database.
         """
@@ -29,7 +32,7 @@ class UserRepo:
                 )
 
     @staticmethod
-    def get_by_email(email: str) -> Optional[Dict[str, Any]]:
+    def get_by_email(email: EmailStr) -> Optional[Dict[str, Any]]:
         """
         Retrieves a user record from the database by their email address.
         """
@@ -39,7 +42,7 @@ class UserRepo:
                 return cur.fetchone()
 
     @staticmethod
-    def set_active(email: str) -> None:
+    def set_active(email: EmailStr) -> None:
         """
         Updates a user's status to active in the database.
         """

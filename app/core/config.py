@@ -21,7 +21,7 @@ class Settings:  # pylint: disable=too-few-public-methods
     DB_PORT: str = os.getenv("POSTGRES_PORT", "5432")
     SMTP_HOST: str = os.getenv("SMTP_HOST", "localhost")
     SMTP_PORT: int = int(os.getenv("SMTP_PORT", "1025"))
-    EMAILS_FROM: str = "noreply@example.com"
+    EMAILS_FROM: str = os.getenv("EMAILS_FROM", "noreply@example.com")
 
     @property
     def database_url(self) -> str:
