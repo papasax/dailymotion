@@ -9,9 +9,11 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /build
 
+# Copy ONLY the production requirements
 COPY requirements.txt .
-# Install dependencies into a local folder
+# Install ONLY production dependencies
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
 
 # Stage 2: Final Production Image
 FROM python:3.14-slim

@@ -7,6 +7,7 @@ import time
 from unittest.mock import patch
 import pytest
 from fastapi.testclient import TestClient
+from app.core.security import get_password_hash
 from app.main import app
 
 client = TestClient(app)
@@ -26,6 +27,9 @@ def mock_user_repo():
         # Synchronize both mocks to share the same behavior
         mock_deps.get_by_email = mock_endpoints.get_by_email
         yield mock_endpoints
+
+
+# pylint: disable=redefined-outer-name
 
 
 def test_register_success(mock_user_repo):
@@ -60,7 +64,6 @@ def test_register_already_exists(mock_user_repo):
 def test_activate_success(mock_user_repo):
     """Tests successful account activation using a valid code and Basic Auth."""
     # Setup mock: Valid user, correct code, not expired
-    from app.core.security import get_password_hash
 
     mock_user_repo.get_by_email.return_value = {
         "email": "test@example.com",
@@ -84,7 +87,6 @@ def test_activate_success(mock_user_repo):
 def test_activate_expired_code(mock_user_repo):
     """Tests activation failure when the 60-second window has passed."""
     # Setup mock: Valid user, correct code, but EXPIRED
-    from app.core.security import get_password_hash
 
     mock_user_repo.get_by_email.return_value = {
         "email": "test@example.com",
@@ -107,7 +109,6 @@ def test_activate_expired_code(mock_user_repo):
 def test_activate_wrong_auth(mock_user_repo):
     """Tests activation failure when Basic Auth credentials are invalid."""
     # Setup mock: User exists but password is different
-    from app.core.security import get_password_hash
 
     mock_user_repo.get_by_email.return_value = {
         "email": "test@example.com",

@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def lifespan():
+async def lifespan(_app: FastAPI):
     """
     Handles application startup and shutdown events.
     Ensures the database is initialized before the app starts.

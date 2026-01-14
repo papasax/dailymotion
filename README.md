@@ -15,11 +15,18 @@ This API manages user registration and secure account activation. It is built wi
 ### 1. Prerequisites
 *   Docker and Docker Compose installed.
 
-### 2. Quick start
-
-To launch the entire stack (API, PostgreSQL, Mailpit):
+### 2. Development Mode (with Dev Dependencies & Hot Reload)
+To start the project in development mode (installs `pytest`, `httpx`, and enables hot-reload):
 ```bash
 docker-compose up --build
+```
+
+*The `docker-compose.override.yml` is automatically applied, installing dev requirements and mounting your code as a volume.*
+
+### 3. Production Mode (Slim Image & No Dev Tools)
+To simulate the production environment strictly (without dev tools or volume mounts):
+```bash 
+docker-compose -f docker-compose.yml up --build
 ```
 
 ### 3. Service access
@@ -47,20 +54,25 @@ Warning: You must provide your credentials via Basic Auth (Email / Password). Ac
 
 ---
 
-## 🧪 Tests
+## 🧪 Testing
 
-The project separates fast tests from database validation tests.
+Testing is handled via `pytest`. Ensure the development environment is running to have access to the test tools.
 
-**Run tests via Docker:**
+**Run tests inside the running container:**
 ```bash 
-docker-compose run api pytest tests/ -v
+docker-compose exec api pytest tests/ -v
 ```
+
 *   **Unit Tests** : Use mocks to isolate business logic.
 *   **Integration Tests** : Use the real PostgreSQL database to validate persistence.
 
 ---
 
 ⚙️ Technical Choices
+*   **Multi-Stage Dockerfile**: The production image is built in two stages to exclude build tools (`gcc`, `libpq-dev`) and development dependencies, resulting in a smaller and more secure attack surface.
+*   **Environment Separation**: 
+    *   `requirements.txt`: Core production dependencies.
+    *   `requirements-dev.txt`: Development and testing tools.
 *   **FastAPI & Python 3.14** : Uses the latest versions to benefit from asynchronous performance.
 *   **No ORM** : Uses Psycopg 3 for full control over SQL queries and optimal performance.
 *   **Password Security** : Uses Bcrypt (via passlib). Passwords are limited to 72 bytes to comply with the algorithm constraints and avoid truncation issues.

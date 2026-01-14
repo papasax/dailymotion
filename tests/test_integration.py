@@ -3,11 +3,12 @@ Integration tests for the User API.
 Tests the full flow (Registration -> DB -> Activation) using a real PostgreSQL instance.
 """
 
-import pytest
 import time
+import pytest
 from fastapi.testclient import TestClient
 from app.main import app
 from app.db import get_db_connection
+from app.core.security import get_password_hash
 from app.models.user import UserRepo
 
 client = TestClient(app)
@@ -17,10 +18,12 @@ client = TestClient(app)
 def clean_db():
     """
     Cleans the users table before each integration test.
+    To avoid potential nightmare in case this test is launched in production
+    we only select test users
     """
     with get_db_connection() as conn:
         with conn.cursor() as cur:
-            cur.execute("DELETE FROM users")
+            cur.execute("DELETE FROM users WHERE email LIKE '%%@example.com'")
             conn.commit()
     yield
 
@@ -88,7 +91,6 @@ def test_activation_fails_after_expiry():
 
     # Simulate a user already in the DB with an expired code
     # (Using Repo directly to manipulate time)
-    from app.core.security import get_password_hash
 
     expired_time = time.time() - 10  # Expired 10 seconds ago
 
