@@ -28,12 +28,12 @@ coverage.xml
 
 # Docker & DB
 .docker/
-# Si vous utilisez des volumes locaux pour Postgres (ex: pgdata/)
+# Local Postgres volume (e.g., pgdata/)
 pgdata/
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Environment variables (NE JAMAIS COMMITER)
+# Environment variables
 .env

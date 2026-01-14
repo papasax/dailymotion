@@ -8,8 +8,14 @@ client = TestClient(app)
 
 @pytest.fixture
 def mock_user_repo():
-    with patch("app.api.endpoints.UserRepo") as mocked:
-        yield mocked
+    # We mock UserRepo in deps.py because that's where it's called by the auth dependency.
+    # We also mock it in endpoints.py for direct calls like register/set_active.
+    with patch("app.api.deps.UserRepo") as mock_deps, \
+         patch("app.api.endpoints.UserRepo") as mock_endpoints:
+        
+        # Synchronize both mocks to share the same behavior
+        mock_deps.get_by_email = mock_endpoints.get_by_email
+        yield mock_endpoints
 
 def test_register_success(mock_user_repo):
     # Setup mock: User does not exist

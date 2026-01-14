@@ -4,8 +4,11 @@ class Settings:
     DB_USER: str = os.getenv("POSTGRES_USER", "user")
     DB_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "password")
     DB_NAME: str = os.getenv("POSTGRES_DB", "registration_db")
-    DB_HOST: str = os.getenv("POSTGRES_HOST", "localhost")  # 'localhost' pour le local
+    DB_HOST: str = os.getenv("POSTGRES_HOST", "localhost")  # 'localhost' for local development
     DB_PORT: str = os.getenv("POSTGRES_PORT", "5432")
+    SMTP_HOST: str = os.getenv("SMTP_HOST", "localhost")
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "1025"))
+    EMAILS_FROM: str = "noreply@example.com"
 
     @property
     def DATABASE_URL(self) -> str:

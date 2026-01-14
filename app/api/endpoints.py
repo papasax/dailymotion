@@ -5,6 +5,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from app.schemas.user import UserCreate, ActivationRequest, UserResponse
 from app.models.user import UserRepo
 from app.core.security import verify_password, get_password_hash
+from app.core.email import send_activation_email
 from app.api.deps import get_current_active_user
 
 router = APIRouter()
@@ -19,8 +20,11 @@ async def register(user_in: UserCreate):
     expires_at = time.time() + 60
     
     UserRepo.create(user_in.email, get_password_hash(user_in.password), code, expires_at)
-    print(f"DEBUG: Activation code for {user_in.email} is {code}")
-    return {"message": "User registered. Check email for 4-digit code."}
+    
+    # Send actual email
+    send_activation_email(user_in.email, code)
+    
+    return {"message": "User registered. Please check your email for the code."}
 
 @router.post("/activate")
 async def activate(

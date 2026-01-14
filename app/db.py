@@ -4,7 +4,7 @@ from psycopg.rows import dict_row
 from app.core.config import settings
 
 def get_db_connection():
-    # Tentative de connexion avec retry pour attendre que le DNS/DB soit prêt
+    # Database connection attempt with retry logic to wait for DNS/DB readiness
     retries = 5
     while retries > 0:
         try:

@@ -16,6 +16,14 @@ services:
     networks:
       - app-network
 
+  mail:
+    image: axllent/mailpit
+    ports:
+      - "8025:8025" # Web UI
+      - "1025:1025" # SMTP server
+    networks:
+      - app-network
+
   api:
     build: .
     networks:
@@ -26,10 +34,14 @@ services:
       - POSTGRES_HOST=db
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
+      - SMTP_HOST=mail
+      - SMTP_PORT=1025
       - POSTGRES_DB=registration_db
     depends_on:
       db:
         condition: service_healthy
+      mail:
+        condition: service_started
 
 networks:
   app-network:

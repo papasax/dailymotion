@@ -5,6 +5,7 @@ from app.db import init_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Perform database initialization (ensure tables exist)
     init_db()
     yield
 

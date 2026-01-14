@@ -1,3 +1,5 @@
+from pydantic import EmailStr
+
 from app.db import get_db_connection
 
 class UserRepo:
@@ -11,14 +13,14 @@ class UserRepo:
                 )
 
     @staticmethod
-    def get_by_email(email: str):
+    def get_by_email(email: EmailStr):
         with get_db_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute("SELECT * FROM users WHERE email = %s", (email,))
                 return cur.fetchone()
 
     @staticmethod
-    def set_active(email: str):
+    def set_active(email: EmailStr):
         with get_db_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute("UPDATE users SET is_active = TRUE WHERE email = %s", (email,))
