@@ -32,13 +32,3 @@ async def get_current_active_user(
         )
 
     return user
-
-
-def get_current_user_email(
-    credentials: HTTPBasicCredentials = Depends(security),
-) -> str:
-    """
-    Simpler dependency if you only need the email from the credentials
-    without necessarily querying the DB (though Basic Auth usually requires it).
-    """
-    return credentials.username
