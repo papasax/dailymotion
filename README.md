@@ -1,22 +1,22 @@
 # User Registration & Activation API
 
-This API manages user registration and secure account activation. It is built with FastAPI, uses PostgreSQL for storage (via raw SQL), and Mailpit to intercept activation emails.
+A professional, high-performance asynchronous API built with **FastAPI** and **PostgreSQL**. This project manages user registration with email verification and secure account activation.
 
 ## 📋 Features
-*   **Registration** : Create a user with email and password (hashed with Bcrypt).
-*   **Verification** : Generation of a 4-digit code sent by email.
-*   **Activation** : Account validation using BASIC AUTH and code verification.
-*   **Expiration** : The activation code automatically expires after 60 seconds.
-*   **DAL Architecture** : Data access without an ORM for full control over SQL.
-*   **Dockerized** : Complete environment with API, database, and mail server.
+*   **Fully Asynchronous**: Leveraging `aiosmtplib` and `psycopg` (async mode) for non-blocking I/O.
+*   **Database Pooling**: Efficient connection management using `psycopg-pool`.
+*   **Secure Authentication**: Passwords hashed with **Bcrypt** (pinned to v4.3.0).
+*   **Health Monitoring**: Built-in `/health` endpoint monitoring DB and SMTP status.
+*   **Production Ready**: Multi-stage `Dockerfile` (slim image) running as a non-root user.
+*   **Developer Friendly**: `docker-compose.override.yml` for hot-reloading and dev-tools.
 
 ## 🚀 Installation & Startup
 
 ### 1. Prerequisites
 *   Docker and Docker Compose installed.
 
-### 2. Development Mode (with Dev Dependencies & Hot Reload)
-To start the project in development mode (installs `pytest`, `httpx`, and enables hot-reload):
+### 2. Launching the Stack (Development)
+The development mode includes hot-reloading and installs testing tools automatically.
 ```bash
 docker-compose up --build
 ```
@@ -32,6 +32,7 @@ docker-compose -f docker-compose.yml up --build
 ### 3. Service access
 *   **API (Swagger documentation)** : http://localhost:8000/docs￼
 *   **Mailpit interface (received emails)** : http://localhost:8025￼
+*   **Health Check**: [http://localhost:8000/api/v1/health](http://localhost:8000/api/v1/health)
 *   **Database** : localhost:5432 (User: user, Password: password, DB: registration_db)
 
 ⸻
@@ -56,7 +57,8 @@ Warning: You must provide your credentials via Basic Auth (Email / Password). Ac
 
 ## 🧪 Testing
 
-Testing is handled via `pytest`. Ensure the development environment is running to have access to the test tools.
+The project uses `pytest` and `pytest-asyncio` for testing. 
+Ensure the development environment is running to have access to the test tools.
 
 **Run tests inside the running container:**
 ```bash 
@@ -67,6 +69,14 @@ docker-compose exec api pytest tests/ -v
 *   **Integration Tests** : Use the real PostgreSQL database to validate persistence.
 
 ---
+
+## 🛡 Security & Design
+
+*   **Raw SQL**: No ORM is used. Queries are handwritten in `app/models/user.py` for maximum performance and visibility.
+*   **Password Truncation**: Bcrypt inputs are capped at 72 bytes via Pydantic and Security helpers to prevent silent truncation errors.
+*   **Non-Root User**: The production container runs under `appuser` to minimize security risks.
+*   **Dependency Pinning**: All production and dev requirements are strictly pinned for environment parity.
+
 
 ## ⚙️ Technical Choices
 *   **Multi-Stage Dockerfile**: The production image is built in two stages to exclude build tools (`gcc`, `libpq-dev`) and development dependencies, resulting in a smaller and more secure attack surface.
